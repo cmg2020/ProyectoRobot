@@ -1,0 +1,97 @@
+// **    RUTINA DE LECTURA Y CALIBRACION DE COLORES    **
+// ** Hardware usado: Arduino UNO + Sensor RGB TCS3200 **
+// **              IDE: Arduino IDE 1.8.16             **
+// **        Cristian Moreno Guajardo 07/11/2021       **
+// ------------------------------------------------------
+
+
+// Definicion de variables referente a los pines de entrada y salida
+// que se usaran entre el sensor TCS3200 y la placa Arduino
+
+const int s0 = 4;
+const int s1 = 5;
+const int s2 = 6;
+const int s3 = 7;
+const int out = 8;
+
+void setup() {
+
+  Serial.begin(9600);
+  // H= Estado alto(1), L=Estado bajo (0)
+  pinMode(s0, OUTPUT); // S0 y S1 indican la divison de frecuencia para la salida
+  pinMode(s1, OUTPUT); // LL- Apagado , LH- Divide por 50 , HL- Divide por 5, HH- No divide
+  pinMode(s2, OUTPUT); // S2 y S3 indican el color a scannear
+  pinMode(s3, OUTPUT); // LL- Rojo, LH- Azul, HL- Sin filtro (blanco), HH- Verde
+  pinMode(out, INPUT); // Salida de frecuencia proporcional al color elegido
+
+  digitalWrite (s0, HIGH); // Se activa el divisor (HL)
+  digitalWrite (s1, LOW);  // Dividiendo por 5 la frecuencia de salida para ajustarla al microprocesador
+
+}
+
+void loop() {
+
+  // Se escanean los tres colores con su funcion correspondiente y se guardan en R,G,B...
+
+  int R = getRojo(); // Llama a la funcion de leer el color ROJO
+  delay(200); // Pausa para equlibrar la lectura
+  int G = getVerde(); // Llama a la funcion de leer el color VERDE
+  delay(200);
+  int B = getAzul(); // Llama a la funcion de leer el color AZUL
+  delay(200);
+
+  Serial.print("Int R " + String(R)); // Se envian los valores a pantalla formateados
+  Serial.print("  --  Int G " + String(G));
+  Serial.print("  --  Int B " + String(B));
+
+  // Se hacen las comprobaciones sobre los colores RGB obtenidos con un margen de error para afinar el resultado
+  // Se deben afinar los valores para cada color en particular
+  // y se imprime en pantalla el color correspondiente a los valores
+  
+  if ( R > 85 && R < 100 && G > 47 && G < 56 && B > 24 && B < R ) {
+    Serial.print("  EL COLOR ES AZUL");
+  }
+  else if ( R > 27 && R < 35 && G > 37 && G < 45 && B > 68 && B < 78 ) {
+    Serial.print("  EL COLOR ES AMARILLO");
+  }
+  else if ( R > 38 && R < B && G > 133 && G < 150 && B > 108 && B < 125 ) {
+    Serial.print("  EL COLOR ES ROJO");
+  }
+  else if ( R > 140 && R < 157 && G > 138 && G < 150 && B > 120 && B < 140 ) {
+    Serial.print("  EL COLOR ES VERDE");
+  }
+
+  else
+  {
+    Serial.print(" -----> EN ESPERA... SCANEANDO!!!"); // En caso de no haber ningun valor que se ajuste a los anteriores
+  }
+  Serial.println(" ");
+
+}
+// *** FUNCIONES DE LECTURA DE COLORES
+// Se selecciona el color segun la combinacion enviada a los pines S2 y S3
+// y se activa el pin OUT para hacer la lectura de la frecuencia generada por cada sensor
+
+int getRojo() {  // Leer color ROJO
+
+  digitalWrite(s2, LOW);
+  digitalWrite(s3, LOW);
+  int ROJO = pulseIn(out, LOW);
+  return ROJO;
+}
+
+int getAzul() { // Leer color AZUL
+
+  digitalWrite(s2, LOW);
+  digitalWrite(s3, HIGH);
+  int AZUL = pulseIn(out, LOW);
+  return AZUL;
+}
+
+int getVerde() { // Leer color VERDE
+
+  digitalWrite(s2, HIGH);
+  digitalWrite(s3, HIGH);
+  int VERDE = pulseIn(out, LOW);
+  return VERDE;
+}
