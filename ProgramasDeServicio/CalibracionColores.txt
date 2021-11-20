@@ -40,12 +40,12 @@ void loop() {
   int B = getAzul(); // Llama a la funcion de leer el color AZUL
   delay(200);
 
-  Serial.print("Int R " + String(R)); // Se envian los valores a pantalla formateados
+  Serial.print("Int R " + String(R)); // Se envian los valores a pantalla formateados para comprobar los datos
   Serial.print("  --  Int G " + String(G));
   Serial.print("  --  Int B " + String(B));
 
   // Se hacen las comprobaciones sobre los colores RGB obtenidos con un margen de error para afinar el resultado
-  // Se deben afinar los valores para cada color en particular
+  // Se deben afinar los valores para CADA COLOR en particular
   // y se imprime en pantalla el color correspondiente a los valores
   
   if ( R > 85 && R < 100 && G > 47 && G < 56 && B > 24 && B < R ) {
@@ -63,7 +63,7 @@ void loop() {
 
   else
   {
-    Serial.print(" -----> EN ESPERA... SCANEANDO!!!"); // En caso de no haber ningun valor que se ajuste a los anteriores
+    Serial.print(" -----> EN ESPERA... SCANEANDO!!!"); // EN ESPERA, en caso de no haber ningun valor que se ajuste a los anteriores
   }
   Serial.println(" ");
 
