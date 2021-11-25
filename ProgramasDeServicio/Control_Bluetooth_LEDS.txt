@@ -1,0 +1,46 @@
+// **    RUTINA CONEXION Y CONTROL DE BLUETOOTH (LEDs)     **
+// ** Hardware usado: Arduino UNO + Modulo Bluetooth HC-06 **
+// ** Telefono movil Android + programa de control propio  **
+// **    IDE: Arduino IDE 1.8.16 - MIT APP INVENTOR        **
+// **        Cristian Moreno Guajardo 25/11/2021           **
+// ----------------------------------------------------------
+
+// Con este programa se pretende comprobar y aprender a usar el modulo Bluetooth HC-06.
+// A traves de la aplicacion MIT APP INVENTOR se programa un interface con el que se
+// envian datos a traves del BT del telefono y que son recogidos por el modulo HC-06
+// con los que se encenderan y apagaran dos LEDs como testigos de la comunicacion...
+
+
+#include <SoftwareSerial.h>  // libreria que permite establecer pines digitales diferentes a los habituales
+                             // para comunicacion serie en general
+
+SoftwareSerial miBT(10, 11);  // Definiciones de pines de comunicacion:
+                              // Pin 10 como Recepcion (RX), Pin 11 como Transmision (TX)
+
+char DATO = 0;      // variable para almacenar caracter recibido desde BT
+int LEDROJO = 2;    // LED rojo a pin digital numero 2
+int LEDVERDE = 3;   // LED verde a pin digital numero 3
+
+void setup(){
+  miBT.begin(38400);    // comunicacion serie entre Arduino y el modulo HC-06 38400 bps
+  pinMode(LEDROJO, OUTPUT); // pin 2 como salida
+  pinMode(LEDVERDE, OUTPUT);  // pin 3 como salida
+}
+
+void loop(){
+if (miBT.available()){      // si hay informacion disponible desde modulo
+  DATO = miBT.read();   // almacena en DATO el caracter recibido desde modulo
+
+  if( DATO == '1' )   // si el caracter recibido es el numero 1
+  digitalWrite(LEDROJO, HIGH);  // enciende LED rojo
+
+  if( DATO == '2' )   // si el caracter recibido es el numero 2
+  digitalWrite(LEDROJO, LOW); // apaga LED rojo
+
+  if( DATO == '3' )   // si el caracter recibido es el numero 3
+  digitalWrite(LEDVERDE, HIGH); // enciende LED verde
+
+  if( DATO == '4' )   // si el caracter recibido es el numero 4
+  digitalWrite(LEDVERDE, LOW);  // apaga LED verde
+}
+}
